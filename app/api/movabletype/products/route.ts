@@ -14,7 +14,10 @@ export async function GET(request: NextRequest) {
     const api = createMovableTypeAPI();
     
     // productsのコンテンツタイプID: 2
-    const products = await api.getEntries(getContentTypeId('PRODUCTS'), {
+    const contentTypeId = getContentTypeId('PRODUCTS');
+    console.log('Using content type ID:', contentTypeId);
+    
+    const products = await api.getEntries(contentTypeId, {
       limit,
       offset,
       status,

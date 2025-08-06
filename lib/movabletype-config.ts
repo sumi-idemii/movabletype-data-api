@@ -3,8 +3,8 @@
 export const MOVABLETYPE_CONFIG = {
   // コンテンツタイプID
   CONTENT_TYPES: {
-    PRODUCTS: 2,
-    CASES: 3,
+    PRODUCTS: 3,  // 実際のMovableTypeの設定に合わせて修正
+    CASES: 4,     // 仮の設定（実際のIDを確認後に修正）
   },
   
   // デフォルト設定
