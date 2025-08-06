@@ -36,6 +36,18 @@ export interface MovableTypeListResponse {
   items: MovableTypeEntry[];
 }
 
+export interface MovableTypeContentType {
+  id: string;
+  name: string;
+  label: string;
+  description?: string;
+}
+
+export interface MovableTypeContentTypeListResponse {
+  totalResults: number;
+  items: MovableTypeContentType[];
+}
+
 export interface AuthenticationResponse {
   accessToken: string;
   sessionId: string;
@@ -187,7 +199,7 @@ export class MovableTypeAPI {
   }
 
   // エントリー一覧を取得
-  async getEntries(contentType: string, options: {
+  async getEntries(contentTypeId: string | number, options: {
     limit?: number;
     offset?: number;
     status?: string;
@@ -205,14 +217,14 @@ export class MovableTypeAPI {
     if (options.includeCustomFields) params.append('includeCustomFields', 'true');
 
     const queryString = params.toString();
-    const endpoint = `/content_types/${contentType}/entries${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/content_types/${contentTypeId}/entries${queryString ? `?${queryString}` : ''}`;
     
     const response = await this.makeRequest(endpoint);
     return response.json();
   }
 
   // 特定のエントリーを取得
-  async getEntry(contentType: string, entryId: string, options: {
+  async getEntry(contentTypeId: string | number, entryId: string, options: {
     includeCategories?: boolean;
     includeTags?: boolean;
     includeCustomFields?: boolean;
@@ -224,17 +236,36 @@ export class MovableTypeAPI {
     if (options.includeCustomFields) params.append('includeCustomFields', 'true');
 
     const queryString = params.toString();
-    const endpoint = `/content_types/${contentType}/entries/${entryId}${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/content_types/${contentTypeId}/entries/${entryId}${queryString ? `?${queryString}` : ''}`;
     
     const response = await this.makeRequest(endpoint);
     return response.json();
   }
 
   // コンテンツタイプの情報を取得
-  async getContentType(contentType: string) {
-    const endpoint = `/content_types/${contentType}`;
+  async getContentType(contentTypeId: string | number) {
+    const endpoint = `/content_types/${contentTypeId}`;
     const response = await this.makeRequest(endpoint);
     return response.json();
+  }
+
+  // コンテンツタイプ一覧を取得
+  async getContentTypes(): Promise<MovableTypeContentTypeListResponse> {
+    const endpoint = `/content_types`;
+    const response = await this.makeRequest(endpoint);
+    return response.json();
+  }
+
+  // コンテンツタイプ名からIDを取得
+  async getContentTypeIdByName(name: string): Promise<string | null> {
+    try {
+      const contentTypes = await this.getContentTypes();
+      const contentType = contentTypes.items.find(ct => ct.name === name || ct.label === name);
+      return contentType ? contentType.id : null;
+    } catch (error) {
+      console.error('Error getting content type ID by name:', error);
+      return null;
+    }
   }
 }
 

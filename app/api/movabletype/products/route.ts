@@ -12,7 +12,16 @@ export async function GET(request: NextRequest) {
 
     const api = createMovableTypeAPI();
     
-    const products = await api.getEntries('products', {
+    // コンテンツタイプIDを取得（名前から）
+    const contentTypeId = await api.getContentTypeIdByName('products');
+    if (!contentTypeId) {
+      return NextResponse.json(
+        { error: 'Content type "products" not found' },
+        { status: 404 }
+      );
+    }
+    
+    const products = await api.getEntries(contentTypeId, {
       limit,
       offset,
       status,
