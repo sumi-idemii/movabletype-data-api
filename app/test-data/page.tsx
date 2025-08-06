@@ -20,11 +20,19 @@ export default function TestDataPage() {
     setProductsData(null);
 
     try {
-      const response = await fetch('/api/movabletype/products?limit=5');
+      const url = '/api/movabletype/products?limit=5';
+      console.log('Fetching products from:', url);
+      
+      const response = await fetch(url);
       const data = await response.json();
 
       if (response.ok) {
-        setProductsData(data);
+        setProductsData({
+          ...data,
+          endpoint: url,
+          status: response.status,
+          headers: Object.fromEntries(response.headers.entries()),
+        });
       } else {
         setError(data.details || data.error || 'Unknown error');
       }
@@ -41,11 +49,19 @@ export default function TestDataPage() {
     setCasesData(null);
 
     try {
-      const response = await fetch('/api/movabletype/cases?limit=5');
+      const url = '/api/movabletype/cases?limit=5';
+      console.log('Fetching cases from:', url);
+      
+      const response = await fetch(url);
       const data = await response.json();
 
       if (response.ok) {
-        setCasesData(data);
+        setCasesData({
+          ...data,
+          endpoint: url,
+          status: response.status,
+          headers: Object.fromEntries(response.headers.entries()),
+        });
       } else {
         setError(data.details || data.error || 'Unknown error');
       }
@@ -149,6 +165,42 @@ export default function TestDataPage() {
                       </AlertDescription>
                     </Alert>
                   )}
+
+                  {productsData.endpoint && (
+                    <Card className="mt-4">
+                      <CardHeader>
+                        <CardTitle className="text-sm">API エンドポイント情報</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">エンドポイント:</span>
+                            <Badge variant="outline" className="text-xs">
+                              {productsData.endpoint}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">ステータス:</span>
+                            <Badge variant={productsData.status === 200 ? "default" : "destructive"}>
+                              {productsData.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">総件数:</span>
+                            <Badge variant="secondary">
+                              {productsData.totalResults || 0}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">取得件数:</span>
+                            <Badge variant="secondary">
+                              {productsData.items?.length || 0}
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                   
                   <details className="mt-4">
                     <summary className="cursor-pointer text-sm font-medium">生データを表示</summary>
@@ -209,6 +261,42 @@ export default function TestDataPage() {
                         データが見つかりませんでした。MovableTypeに「case」コンテンツタイプのエントリーが存在するか確認してください。
                       </AlertDescription>
                     </Alert>
+                  )}
+
+                  {casesData.endpoint && (
+                    <Card className="mt-4">
+                      <CardHeader>
+                        <CardTitle className="text-sm">API エンドポイント情報</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">エンドポイント:</span>
+                            <Badge variant="outline" className="text-xs">
+                              {casesData.endpoint}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">ステータス:</span>
+                            <Badge variant={casesData.status === 200 ? "default" : "destructive"}>
+                              {casesData.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">総件数:</span>
+                            <Badge variant="secondary">
+                              {casesData.totalResults || 0}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">取得件数:</span>
+                            <Badge variant="secondary">
+                              {casesData.items?.length || 0}
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
                   
                   <details className="mt-4">
