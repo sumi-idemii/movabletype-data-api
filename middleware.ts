@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
   // 環境変数から認証情報を取得
-  const username = process.env.BASIC_AUTH_USERNAME || 'movabletype-data-api'
-  const password = process.env.BASIC_AUTH_PASSWORD || 'Pnfeaswe@u342'
+  const username = process.env.BASIC_AUTH_USERNAME as string
+  const password = process.env.BASIC_AUTH_PASSWORD as string
 
   // 認証情報が設定されていない場合は認証をスキップ
   if (!username || !password) {
