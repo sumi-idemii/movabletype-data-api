@@ -302,7 +302,12 @@ export function createMovableTypeAPI(): MovableTypeAPI {
   };
 
   if (!config.baseUrl || !config.username || !config.password) {
-    throw new Error('MovableType API configuration is incomplete. Please check environment variables.');
+    const missingVars = [];
+    if (!config.baseUrl) missingVars.push('MOVABLETYPE_API_BASE_URL');
+    if (!config.username) missingVars.push('MOVABLETYPE_USERNAME');
+    if (!config.password) missingVars.push('MOVABLETYPE_PASSWORD');
+    
+    throw new Error(`MovableType API configuration is incomplete. Missing environment variables: ${missingVars.join(', ')}. Current config: baseUrl=${config.baseUrl ? 'SET' : 'NOT_SET'}, username=${config.username ? 'SET' : 'NOT_SET'}, password=${config.password ? 'SET' : 'NOT_SET'}, siteId=${config.siteId}`);
   }
 
   return new MovableTypeAPI(config);

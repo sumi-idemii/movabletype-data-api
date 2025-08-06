@@ -49,10 +49,19 @@ export default function TestDataPage() {
       const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
       const contentTypeId = getContentTypeId('PRODUCTS');
       
+      // 環境変数の状況を確認
+      const envStatus = {
+        baseUrl: process.env.MOVABLETYPE_API_BASE_URL ? 'SET' : 'NOT_SET',
+        username: process.env.MOVABLETYPE_USERNAME ? 'SET' : 'NOT_SET',
+        password: process.env.MOVABLETYPE_PASSWORD ? 'SET' : 'NOT_SET',
+        siteId: process.env.MOVABLETYPE_SITE_ID || '3',
+      };
+      
       setProductsData({
         error: errorMessage,
         endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
         status: 500,
+        envStatus,
       });
       setError(errorMessage);
     } finally {
@@ -93,10 +102,19 @@ export default function TestDataPage() {
       const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
       const contentTypeId = getContentTypeId('CASES');
       
+      // 環境変数の状況を確認
+      const envStatus = {
+        baseUrl: process.env.MOVABLETYPE_API_BASE_URL ? 'SET' : 'NOT_SET',
+        username: process.env.MOVABLETYPE_USERNAME ? 'SET' : 'NOT_SET',
+        password: process.env.MOVABLETYPE_PASSWORD ? 'SET' : 'NOT_SET',
+        siteId: process.env.MOVABLETYPE_SITE_ID || '3',
+      };
+      
       setCasesData({
         error: errorMessage,
         endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
         status: 500,
+        envStatus,
       });
       setError(errorMessage);
     } finally {
