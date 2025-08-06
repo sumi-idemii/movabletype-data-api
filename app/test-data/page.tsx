@@ -210,35 +210,6 @@ export default function TestDataPage() {
                                 <span className="text-sm font-medium text-red-600">エラー:</span>
                                 <span className="text-sm text-red-600">{productsData.error}</span>
                               </div>
-                              {productsData.envStatus && (
-                                <details className="mt-2">
-                                  <summary className="cursor-pointer text-sm font-medium text-blue-600">環境変数状況を表示</summary>
-                                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                                    <div><strong>環境変数設定状況:</strong></div>
-                                    <div className="mt-1 space-y-1">
-                                      <div>MOVABLETYPE_API_BASE_URL: {productsData.envStatus.baseUrl}</div>
-                                      <div>MOVABLETYPE_USERNAME: {productsData.envStatus.username}</div>
-                                      <div>MOVABLETYPE_PASSWORD: {productsData.envStatus.password}</div>
-                                      <div>MOVABLETYPE_SITE_ID: {productsData.envStatus.siteId}</div>
-                                    </div>
-                                  </div>
-                                </details>
-                              )}
-                              {productsData.debug && (
-                                <details className="mt-2">
-                                  <summary className="cursor-pointer text-sm font-medium text-blue-600">デバッグ情報を表示</summary>
-                                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                                    <div><strong>設定情報:</strong></div>
-                                    <pre className="mt-1">{JSON.stringify(productsData.debug.config, null, 2)}</pre>
-                                    {productsData.debug.stack && (
-                                      <>
-                                        <div className="mt-2"><strong>スタックトレース:</strong></div>
-                                        <pre className="mt-1 text-red-600">{productsData.debug.stack}</pre>
-                                      </>
-                                    )}
-                                  </div>
-                                </details>
-                              )}
                             </div>
                           )}
                         </div>
@@ -344,35 +315,6 @@ export default function TestDataPage() {
                                 <span className="text-sm font-medium text-red-600">エラー:</span>
                                 <span className="text-sm text-red-600">{casesData.error}</span>
                               </div>
-                              {casesData.envStatus && (
-                                <details className="mt-2">
-                                  <summary className="cursor-pointer text-sm font-medium text-blue-600">環境変数状況を表示</summary>
-                                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                                    <div><strong>環境変数設定状況:</strong></div>
-                                    <div className="mt-1 space-y-1">
-                                      <div>MOVABLETYPE_API_BASE_URL: {casesData.envStatus.baseUrl}</div>
-                                      <div>MOVABLETYPE_USERNAME: {casesData.envStatus.username}</div>
-                                      <div>MOVABLETYPE_PASSWORD: {casesData.envStatus.password}</div>
-                                      <div>MOVABLETYPE_SITE_ID: {casesData.envStatus.siteId}</div>
-                                    </div>
-                                  </div>
-                                </details>
-                              )}
-                              {casesData.debug && (
-                                <details className="mt-2">
-                                  <summary className="cursor-pointer text-sm font-medium text-blue-600">デバッグ情報を表示</summary>
-                                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                                    <div><strong>設定情報:</strong></div>
-                                    <pre className="mt-1">{JSON.stringify(casesData.debug.config, null, 2)}</pre>
-                                    {casesData.debug.stack && (
-                                      <>
-                                        <div className="mt-2"><strong>スタックトレース:</strong></div>
-                                        <pre className="mt-1 text-red-600">{casesData.debug.stack}</pre>
-                                      </>
-                                    )}
-                                  </div>
-                                </details>
-                              )}
                             </div>
                           )}
                         </div>
