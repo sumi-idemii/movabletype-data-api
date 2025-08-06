@@ -59,13 +59,24 @@ export class MovableTypeAPI {
 
   // 認証を行う
   async authenticate(): Promise<AuthenticationResponse> {
+    console.log('Starting authentication...');
+    console.log('Config:', {
+      baseUrl: this.config.baseUrl,
+      username: this.config.username,
+      clientId: this.config.clientId,
+      siteId: this.config.siteId,
+    });
+
     const formData = new URLSearchParams();
     formData.append('username', this.config.username);
     formData.append('password', this.config.password);
     formData.append('clientId', this.config.clientId);
     formData.append('remember', '1');
 
-    const response = await fetch(`${this.config.baseUrl}/v5/authentication`, {
+    const authUrl = `${this.config.baseUrl}/v5/authentication`;
+    console.log('Authentication URL:', authUrl);
+
+    const response = await fetch(authUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -73,11 +84,26 @@ export class MovableTypeAPI {
       body: formData,
     });
 
+    console.log('Authentication response status:', response.status);
+    console.log('Authentication response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
-      throw new Error(`Authentication failed: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Authentication failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText,
+      });
+      throw new Error(`Authentication failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const authData = await response.json();
+    console.log('Authentication successful:', {
+      sessionId: authData.sessionId ? '***' : 'NOT_SET',
+      accessToken: authData.accessToken ? '***' : 'NOT_SET',
+      expiresIn: authData.expiresIn,
+    });
+
     this.sessionId = authData.sessionId;
     this.accessToken = authData.accessToken;
     
@@ -127,10 +153,13 @@ export class MovableTypeAPI {
   private async makeRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
     // アクセストークンがない場合は取得
     if (!this.accessToken) {
+      console.log('No access token, getting new one...');
       await this.getAccessToken();
     }
 
     const url = `${this.config.baseUrl}/v5/sites/${this.config.siteId}${endpoint}`;
+    console.log('Making request to:', url);
+    console.log('Headers:', this.getHeaders());
     
     const response = await fetch(url, {
       ...options,
@@ -140,8 +169,18 @@ export class MovableTypeAPI {
       },
     });
 
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
-      throw new Error(`MovableType API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('API request failed:', {
+        url,
+        status: response.status,
+        statusText: response.statusText,
+        errorText,
+      });
+      throw new Error(`MovableType API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     return response;
