@@ -298,10 +298,10 @@ export function createMovableTypeAPI(): MovableTypeAPI {
     username: process.env.MOVABLETYPE_USERNAME || '',
     password: process.env.MOVABLETYPE_PASSWORD || '',
     clientId: process.env.MOVABLETYPE_CLIENT_ID || 'movabletype-data-api',
-    siteId: process.env.MOVABLETYPE_SITE_ID || '',
+    siteId: process.env.MOVABLETYPE_SITE_ID || '3', // デフォルトサイトID
   };
 
-  if (!config.baseUrl || !config.username || !config.password || !config.siteId) {
+  if (!config.baseUrl || !config.username || !config.password) {
     throw new Error('MovableType API configuration is incomplete. Please check environment variables.');
   }
 

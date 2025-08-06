@@ -7,6 +7,9 @@ export const MOVABLETYPE_CONFIG = {
     CASES: 3,     // 正しいIDに修正
   },
   
+  // サイトID
+  SITE_ID: 3,  // 正しいサイトID
+  
   // デフォルト設定
   DEFAULTS: {
     LIMIT: 10,

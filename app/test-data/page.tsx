@@ -36,7 +36,7 @@ export default function TestDataPage() {
       });
 
       const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
       
       setProductsData({
         ...data,
@@ -46,7 +46,7 @@ export default function TestDataPage() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Network error';
       const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
       const contentTypeId = getContentTypeId('PRODUCTS');
       
       setProductsData({
@@ -80,7 +80,7 @@ export default function TestDataPage() {
       });
 
       const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
       
       setCasesData({
         ...data,
@@ -90,7 +90,7 @@ export default function TestDataPage() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Network error';
       const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
       const contentTypeId = getContentTypeId('CASES');
       
       setCasesData({
