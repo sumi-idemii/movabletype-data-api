@@ -133,6 +133,30 @@ export default function DebugApiPage() {
                 </Card>
               )}
 
+              {result.endpoints && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">エンドポイント情報</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">サイト情報:</span>
+                        <Badge variant="outline" className="text-xs">
+                          {result.endpoints.site}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">コンテンツタイプ一覧:</span>
+                        <Badge variant="outline" className="text-xs">
+                          {result.endpoints.contentTypes}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {result.testResults && result.testResults.length > 0 && (
                 <Card>
                   <CardHeader>
@@ -153,6 +177,11 @@ export default function DebugApiPage() {
                             <div>ステータス: {test.status}</div>
                             <div>総件数: {test.totalResults}</div>
                             <div>取得件数: {test.itemsCount}</div>
+                            {test.url && (
+                              <div className="text-xs text-blue-600 break-all">
+                                URL: {test.url}
+                              </div>
+                            )}
                             {test.error && <div className="text-red-600">エラー: {test.error}</div>}
                           </div>
                         </div>
