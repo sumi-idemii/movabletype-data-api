@@ -7,8 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createMovableTypeAPI } from '@/lib/movabletype-api';
-import { getContentTypeId } from '@/lib/movabletype-config';
+
 
 export default function TestDataPage() {
   const [loading, setLoading] = useState(false);
@@ -22,46 +21,25 @@ export default function TestDataPage() {
     setProductsData(null);
 
     try {
-      const api = createMovableTypeAPI();
-      const contentTypeId = getContentTypeId('PRODUCTS');
-      
-      console.log('Fetching products from MovableType Data API with ID:', contentTypeId);
-      
-      const data = await api.getEntries(contentTypeId, {
-        limit: 5,
-        status: 'published',
-        includeCategories: true,
-        includeTags: true,
-        includeCustomFields: true,
-      });
+      const response = await fetch('/api/movabletype/test-data?type=products');
+      const data = await response.json();
 
-      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
-      
-      setProductsData({
-        ...data,
-        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
-        status: 200,
-      });
+      if (response.ok) {
+        setProductsData(data);
+      } else {
+        setProductsData({
+          error: data.error || 'Unknown error',
+          endpoint: data.endpoint || '/v5/sites/3/content_types/2/entries?limit=5',
+          status: response.status,
+        });
+        setError(data.error || 'Unknown error');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Network error';
-      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
-      const contentTypeId = getContentTypeId('PRODUCTS');
-      
-      // 環境変数の状況を確認
-      const envStatus = {
-        baseUrl: process.env.MOVABLETYPE_API_BASE_URL ? 'SET' : 'NOT_SET',
-        username: process.env.MOVABLETYPE_USERNAME ? 'SET' : 'NOT_SET',
-        password: process.env.MOVABLETYPE_PASSWORD ? 'SET' : 'NOT_SET',
-        siteId: process.env.MOVABLETYPE_SITE_ID || '3',
-      };
-      
       setProductsData({
         error: errorMessage,
-        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
+        endpoint: '/v5/sites/3/content_types/2/entries?limit=5',
         status: 500,
-        envStatus,
       });
       setError(errorMessage);
     } finally {
@@ -75,46 +53,25 @@ export default function TestDataPage() {
     setCasesData(null);
 
     try {
-      const api = createMovableTypeAPI();
-      const contentTypeId = getContentTypeId('CASES');
-      
-      console.log('Fetching cases from MovableType Data API with ID:', contentTypeId);
-      
-      const data = await api.getEntries(contentTypeId, {
-        limit: 5,
-        status: 'published',
-        includeCategories: true,
-        includeTags: true,
-        includeCustomFields: true,
-      });
+      const response = await fetch('/api/movabletype/test-data?type=cases');
+      const data = await response.json();
 
-      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
-      
-      setCasesData({
-        ...data,
-        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
-        status: 200,
-      });
+      if (response.ok) {
+        setCasesData(data);
+      } else {
+        setCasesData({
+          error: data.error || 'Unknown error',
+          endpoint: data.endpoint || '/v5/sites/3/content_types/3/entries?limit=5',
+          status: response.status,
+        });
+        setError(data.error || 'Unknown error');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Network error';
-      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
-      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '3';
-      const contentTypeId = getContentTypeId('CASES');
-      
-      // 環境変数の状況を確認
-      const envStatus = {
-        baseUrl: process.env.MOVABLETYPE_API_BASE_URL ? 'SET' : 'NOT_SET',
-        username: process.env.MOVABLETYPE_USERNAME ? 'SET' : 'NOT_SET',
-        password: process.env.MOVABLETYPE_PASSWORD ? 'SET' : 'NOT_SET',
-        siteId: process.env.MOVABLETYPE_SITE_ID || '3',
-      };
-      
       setCasesData({
         error: errorMessage,
-        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
+        endpoint: '/v5/sites/3/content_types/3/entries?limit=5',
         status: 500,
-        envStatus,
       });
       setError(errorMessage);
     } finally {
