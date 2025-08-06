@@ -34,6 +34,12 @@ export default function TestDataPage() {
           headers: Object.fromEntries(response.headers.entries()),
         });
       } else {
+        setProductsData({
+          error: data.details || data.error || 'Unknown error',
+          endpoint: url,
+          status: response.status,
+          headers: Object.fromEntries(response.headers.entries()),
+        });
         setError(data.details || data.error || 'Unknown error');
       }
     } catch (err) {
@@ -63,6 +69,12 @@ export default function TestDataPage() {
           headers: Object.fromEntries(response.headers.entries()),
         });
       } else {
+        setCasesData({
+          error: data.details || data.error || 'Unknown error',
+          endpoint: url,
+          status: response.status,
+          headers: Object.fromEntries(response.headers.entries()),
+        });
         setError(data.details || data.error || 'Unknown error');
       }
     } catch (err) {
@@ -166,7 +178,7 @@ export default function TestDataPage() {
                     </Alert>
                   )}
 
-                  {productsData.endpoint && (
+                  {productsData && (
                     <Card className="mt-4">
                       <CardHeader>
                         <CardTitle className="text-sm">API エンドポイント情報</CardTitle>
@@ -176,13 +188,13 @@ export default function TestDataPage() {
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">エンドポイント:</span>
                             <Badge variant="outline" className="text-xs">
-                              {productsData.endpoint}
+                              {productsData.endpoint || 'N/A'}
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">ステータス:</span>
                             <Badge variant={productsData.status === 200 ? "default" : "destructive"}>
-                              {productsData.status}
+                              {productsData.status || 'N/A'}
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between">
@@ -197,6 +209,12 @@ export default function TestDataPage() {
                               {productsData.items?.length || 0}
                             </Badge>
                           </div>
+                          {productsData.error && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-red-600">エラー:</span>
+                              <span className="text-sm text-red-600">{productsData.error}</span>
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -263,7 +281,7 @@ export default function TestDataPage() {
                     </Alert>
                   )}
 
-                  {casesData.endpoint && (
+                  {casesData && (
                     <Card className="mt-4">
                       <CardHeader>
                         <CardTitle className="text-sm">API エンドポイント情報</CardTitle>
@@ -273,13 +291,13 @@ export default function TestDataPage() {
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">エンドポイント:</span>
                             <Badge variant="outline" className="text-xs">
-                              {casesData.endpoint}
+                              {casesData.endpoint || 'N/A'}
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">ステータス:</span>
                             <Badge variant={casesData.status === 200 ? "default" : "destructive"}>
-                              {casesData.status}
+                              {casesData.status || 'N/A'}
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between">
@@ -294,6 +312,12 @@ export default function TestDataPage() {
                               {casesData.items?.length || 0}
                             </Badge>
                           </div>
+                          {casesData.error && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-red-600">エラー:</span>
+                              <span className="text-sm text-red-600">{casesData.error}</span>
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
