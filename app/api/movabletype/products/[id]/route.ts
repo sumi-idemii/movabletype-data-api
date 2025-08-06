@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createMovableTypeAPI } from '@/lib/movabletype-api';
+import { getContentTypeId } from '@/lib/movabletype-config';
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +9,8 @@ export async function GET(
   try {
     const api = createMovableTypeAPI();
     
-    const product = await api.getEntry('products', params.id, {
+    // productsのコンテンツタイプID: 2
+    const product = await api.getEntry(getContentTypeId('PRODUCTS'), params.id, {
       includeCategories: true,
       includeTags: true,
       includeCustomFields: true,

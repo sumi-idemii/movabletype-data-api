@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createMovableTypeAPI } from '@/lib/movabletype-api';
+import { getContentTypeId } from '@/lib/movabletype-config';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,16 +13,8 @@ export async function GET(request: NextRequest) {
 
     const api = createMovableTypeAPI();
     
-    // コンテンツタイプIDを取得（名前から）
-    const contentTypeId = await api.getContentTypeIdByName('products');
-    if (!contentTypeId) {
-      return NextResponse.json(
-        { error: 'Content type "products" not found' },
-        { status: 404 }
-      );
-    }
-    
-    const products = await api.getEntries(contentTypeId, {
+    // productsのコンテンツタイプID: 2
+    const products = await api.getEntries(getContentTypeId('PRODUCTS'), {
       limit,
       offset,
       status,
