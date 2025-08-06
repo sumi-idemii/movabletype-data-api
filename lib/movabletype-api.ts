@@ -239,6 +239,8 @@ export class MovableTypeAPI {
     const queryString = params.toString();
     const endpoint = `/content_types/${contentTypeId}/entries${queryString ? `?${queryString}` : ''}`;
     
+    console.log('MovableType Data API endpoint:', `${this.config.baseUrl}/v5/sites/${this.config.siteId}${endpoint}`);
+    
     const response = await this.makeRequest(endpoint);
     return response.json();
   }

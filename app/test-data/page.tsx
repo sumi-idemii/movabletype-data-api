@@ -7,6 +7,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { createMovableTypeAPI } from '@/lib/movabletype-api';
+import { getContentTypeId } from '@/lib/movabletype-config';
 
 export default function TestDataPage() {
   const [loading, setLoading] = useState(false);
@@ -20,30 +22,32 @@ export default function TestDataPage() {
     setProductsData(null);
 
     try {
-      const url = '/api/movabletype/products?limit=5';
-      console.log('Fetching products from:', url);
+      const api = createMovableTypeAPI();
+      const contentTypeId = getContentTypeId('PRODUCTS');
       
-      const response = await fetch(url);
-      const data = await response.json();
+      console.log('Fetching products from MovableType Data API with ID:', contentTypeId);
+      
+      const data = await api.getEntries(contentTypeId, {
+        limit: 5,
+        status: 'published',
+        includeCategories: true,
+        includeTags: true,
+        includeCustomFields: true,
+      });
 
-      if (response.ok) {
-        setProductsData({
-          ...data,
-          endpoint: url,
-          status: response.status,
-          headers: Object.fromEntries(response.headers.entries()),
-        });
-      } else {
-        setProductsData({
-          error: data.details || data.error || 'Unknown error',
-          endpoint: url,
-          status: response.status,
-          headers: Object.fromEntries(response.headers.entries()),
-        });
-        setError(data.details || data.error || 'Unknown error');
-      }
+      setProductsData({
+        ...data,
+        endpoint: `MovableType Data API: content_types/${contentTypeId}/entries`,
+        status: 200,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Network error');
+      const errorMessage = err instanceof Error ? err.message : 'Network error';
+      setProductsData({
+        error: errorMessage,
+        endpoint: `MovableType Data API: content_types/${getContentTypeId('PRODUCTS')}/entries`,
+        status: 500,
+      });
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -55,30 +59,32 @@ export default function TestDataPage() {
     setCasesData(null);
 
     try {
-      const url = '/api/movabletype/cases?limit=5';
-      console.log('Fetching cases from:', url);
+      const api = createMovableTypeAPI();
+      const contentTypeId = getContentTypeId('CASES');
       
-      const response = await fetch(url);
-      const data = await response.json();
+      console.log('Fetching cases from MovableType Data API with ID:', contentTypeId);
+      
+      const data = await api.getEntries(contentTypeId, {
+        limit: 5,
+        status: 'published',
+        includeCategories: true,
+        includeTags: true,
+        includeCustomFields: true,
+      });
 
-      if (response.ok) {
-        setCasesData({
-          ...data,
-          endpoint: url,
-          status: response.status,
-          headers: Object.fromEntries(response.headers.entries()),
-        });
-      } else {
-        setCasesData({
-          error: data.details || data.error || 'Unknown error',
-          endpoint: url,
-          status: response.status,
-          headers: Object.fromEntries(response.headers.entries()),
-        });
-        setError(data.details || data.error || 'Unknown error');
-      }
+      setCasesData({
+        ...data,
+        endpoint: `MovableType Data API: content_types/${contentTypeId}/entries`,
+        status: 200,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Network error');
+      const errorMessage = err instanceof Error ? err.message : 'Network error';
+      setCasesData({
+        error: errorMessage,
+        endpoint: `MovableType Data API: content_types/${getContentTypeId('CASES')}/entries`,
+        status: 500,
+      });
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
