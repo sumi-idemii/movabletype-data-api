@@ -3,8 +3,8 @@
 export const MOVABLETYPE_CONFIG = {
   // コンテンツタイプID
   CONTENT_TYPES: {
-    PRODUCTS: 2,  // 正しいIDに修正
-    CASES: 3,     // 正しいIDに修正
+    PRODUCTS: 2,  // 製品詳細のID
+    CASES: 3,     // 事例紹介詳細のID
   },
   
   // サイトID

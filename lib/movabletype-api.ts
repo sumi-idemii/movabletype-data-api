@@ -29,6 +29,23 @@ export interface MovableTypeEntry {
     name: string;
   }>;
   customFields: Record<string, any>;
+  // Content Data用の追加フィールド
+  label?: string;
+  data?: Array<{
+    id: number;
+    label: string;
+    type: string;
+    data: any;
+    format?: string;
+  }>;
+  permalink?: string;
+  basename?: string;
+  blog?: {
+    id: string;
+  };
+  date?: string;
+  unpublishedDate?: string | null;
+  updatable?: boolean;
 }
 
 export interface MovableTypeListResponse {
@@ -71,24 +88,13 @@ export class MovableTypeAPI {
 
   // 認証を行う
   async authenticate(): Promise<AuthenticationResponse> {
-    console.log('Starting authentication...');
-    console.log('Config:', {
-      baseUrl: this.config.baseUrl,
-      username: this.config.username,
-      clientId: this.config.clientId,
-      siteId: this.config.siteId,
-      passwordSet: !!this.config.password,
-    });
-
     const formData = new URLSearchParams();
     formData.append('username', this.config.username);
     formData.append('password', this.config.password);
     formData.append('clientId', this.config.clientId);
     formData.append('remember', '1');
 
-    const authUrl = `${this.config.baseUrl}/v5/authentication`;
-    console.log('Authentication URL:', authUrl);
-    console.log('Form data keys:', Array.from(formData.keys()));
+    const authUrl = `${this.config.baseUrl}/v6/authentication`;
 
     try {
       const response = await fetch(authUrl, {
@@ -99,10 +105,6 @@ export class MovableTypeAPI {
         body: formData,
       });
 
-      console.log('Authentication response status:', response.status);
-      console.log('Authentication response status text:', response.statusText);
-      console.log('Authentication response headers:', Object.fromEntries(response.headers.entries()));
-
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Authentication failed:', {
@@ -110,18 +112,11 @@ export class MovableTypeAPI {
           statusText: response.statusText,
           errorText,
           url: authUrl,
-          formDataKeys: Array.from(formData.keys()),
         });
         throw new Error(`Authentication failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const authData = await response.json();
-      console.log('Authentication successful:', {
-        sessionId: authData.sessionId ? '***' : 'NOT_SET',
-        accessToken: authData.accessToken ? '***' : 'NOT_SET',
-        expiresIn: authData.expiresIn,
-      });
-
       this.sessionId = authData.sessionId;
       this.accessToken = authData.accessToken;
       
@@ -151,7 +146,7 @@ export class MovableTypeAPI {
     const formData = new URLSearchParams();
     formData.append('clientId', this.config.clientId);
 
-    const response = await fetch(`${this.config.baseUrl}/v5/token`, {
+    const response = await fetch(`${this.config.baseUrl}/v6/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -185,13 +180,10 @@ export class MovableTypeAPI {
   private async makeRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
     // アクセストークンがない場合は取得
     if (!this.accessToken) {
-      console.log('No access token, getting new one...');
       await this.getAccessToken();
     }
 
-    const url = `${this.config.baseUrl}/v5/sites/${this.config.siteId}${endpoint}`;
-    console.log('Making request to:', url);
-    console.log('Headers:', this.getHeaders());
+    const url = `${this.config.baseUrl}/v6/sites/${this.config.siteId}${endpoint}`;
     
     const response = await fetch(url, {
       ...options,
@@ -200,9 +192,6 @@ export class MovableTypeAPI {
         ...options.headers,
       },
     });
-
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -237,12 +226,49 @@ export class MovableTypeAPI {
     if (options.includeCustomFields) params.append('includeCustomFields', 'true');
 
     const queryString = params.toString();
-    const endpoint = `/content_types/${contentTypeId}/entries${queryString ? `?${queryString}` : ''}`;
     
-    console.log('MovableType Data API endpoint:', `${this.config.baseUrl}/v5/sites/${this.config.siteId}${endpoint}`);
+    // MovableType Data API v6の正しいエンドポイント構造
+    // コンテンツタイプのデータは /contentTypes/{id}/data エンドポイントを使用
+    const endpoint = `/contentTypes/${contentTypeId.toString()}/data${queryString ? `?${queryString}` : ''}`;
     
     const response = await this.makeRequest(endpoint);
-    return response.json();
+    const data = await response.json();
+    
+    // Content Dataのレスポンス構造をMovableTypeListResponseに変換
+    if (data.items && Array.isArray(data.items)) {
+      const transformedItems = data.items.map((item: any) => ({
+        id: item.id.toString(),
+        title: item.label || item.title || '',
+        body: item.data?.find((field: any) => field.label === '本文')?.data || '',
+        excerpt: item.data?.find((field: any) => field.label === '概要文')?.data || '',
+        createdDate: item.createdDate,
+        modifiedDate: item.modifiedDate,
+        status: item.status,
+        author: {
+          id: item.author?.id || '',
+          name: item.author?.displayName || '',
+        },
+        categories: [],
+        tags: [],
+        customFields: {},
+        // Content Data用の追加フィールド
+        label: item.label,
+        data: item.data,
+        permalink: item.permalink,
+        basename: item.basename,
+        blog: item.blog,
+        date: item.date,
+        unpublishedDate: item.unpublishedDate,
+        updatable: item.updatable,
+      }));
+      
+      return {
+        totalResults: data.totalResults,
+        items: transformedItems,
+      };
+    }
+    
+    return data;
   }
 
   // 特定のエントリーを取得
@@ -258,7 +284,7 @@ export class MovableTypeAPI {
     if (options.includeCustomFields) params.append('includeCustomFields', 'true');
 
     const queryString = params.toString();
-    const endpoint = `/content_types/${contentTypeId}/entries/${entryId}${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/content_types/${contentTypeId.toString()}/entries/${entryId}${queryString ? `?${queryString}` : ''}`;
     
     const response = await this.makeRequest(endpoint);
     return response.json();
@@ -266,7 +292,7 @@ export class MovableTypeAPI {
 
   // コンテンツタイプの情報を取得
   async getContentType(contentTypeId: string | number) {
-    const endpoint = `/content_types/${contentTypeId}`;
+    const endpoint = `/content_types/${contentTypeId.toString()}`;
     const response = await this.makeRequest(endpoint);
     return response.json();
   }

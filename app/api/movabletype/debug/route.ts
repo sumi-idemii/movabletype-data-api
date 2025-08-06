@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     
     // 1. サイト情報を取得
     console.log('1. Testing site information...');
-    const siteUrl = `${process.env.MOVABLETYPE_API_BASE_URL}/v5/sites/${process.env.MOVABLETYPE_SITE_ID}`;
+    const siteUrl = `${process.env.MOVABLETYPE_API_BASE_URL}/v6/sites/${process.env.MOVABLETYPE_SITE_ID}`;
     console.log('Site URL:', siteUrl);
     
     const siteResponse = await fetch(siteUrl, {
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     // 2. コンテンツタイプ一覧を取得
     console.log('2. Testing content types...');
-    const contentTypesUrl = `${process.env.MOVABLETYPE_API_BASE_URL}/v5/sites/${process.env.MOVABLETYPE_SITE_ID}/content_types`;
+    const contentTypesUrl = `${process.env.MOVABLETYPE_API_BASE_URL}/v6/sites/${process.env.MOVABLETYPE_SITE_ID}/contentTypes`;
     console.log('Content types URL:', contentTypesUrl);
     
     const contentTypesResponse = await fetch(contentTypesUrl, {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         console.log(`3. Testing content type: ${contentType.name}`);
         
         try {
-          const entriesUrl = `${process.env.MOVABLETYPE_API_BASE_URL}/v5/sites/${process.env.MOVABLETYPE_SITE_ID}/content_types/${contentType.name}/entries?limit=1`;
+          const entriesUrl = `${process.env.MOVABLETYPE_API_BASE_URL}/v6/sites/${process.env.MOVABLETYPE_SITE_ID}/contentTypes/${contentType.name}/data?limit=1`;
           console.log('Entries URL:', entriesUrl);
           
           const entriesResponse = await fetch(entriesUrl, {
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
             label: contentType.label,
             success: false,
             error: error instanceof Error ? error.message : 'Unknown error',
-            url: `${process.env.MOVABLETYPE_API_BASE_URL}/v5/sites/${process.env.MOVABLETYPE_SITE_ID}/content_types/${contentType.name}/entries?limit=1`,
+            url: `${process.env.MOVABLETYPE_API_BASE_URL}/v6/sites/${process.env.MOVABLETYPE_SITE_ID}/contentTypes/${contentType.name}/data?limit=1`,
           });
         }
       }

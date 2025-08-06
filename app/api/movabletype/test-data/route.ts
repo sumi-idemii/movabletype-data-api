@@ -22,21 +22,52 @@ export async function GET(request: NextRequest) {
     // コンテンツタイプIDを取得
     const contentTypeId = getContentTypeId(type.toUpperCase() as 'PRODUCTS' | 'CASES');
     
-    // エントリーを取得
-    const result = await api.getEntries(contentTypeId, {
-      limit: 5,
-      status: 'published',
-      includeCategories: true,
-      includeTags: true,
-      includeCustomFields: true,
+    // 直接MovableType Data APIを呼び出してデータを取得
+    const directUrl = `https://movabletype.idemii.work/mt/mt-data-api.cgi/v6/sites/3/contentTypes/${contentTypeId}/data?limit=5`;
+    
+    const directResponse = await fetch(directUrl, {
+      headers: {
+        'X-MT-Authorization': `MTAuth accessToken=${api['accessToken']}`,
+        'Content-Type': 'application/json',
+      },
     });
+    
+    const directData = await directResponse.json();
+    
+    // データを適切な形式に変換
+    const transformedItems = directData.items?.map((item: any) => ({
+      id: item.id.toString(),
+      title: item.label || '',
+      body: item.data?.find((field: any) => field.label === '本文')?.data || '',
+      excerpt: item.data?.find((field: any) => field.label === '概要文')?.data || '',
+      createdDate: item.createdDate,
+      modifiedDate: item.modifiedDate,
+      status: item.status,
+      author: {
+        id: item.author?.id || '',
+        name: item.author?.displayName || '',
+      },
+      categories: [],
+      tags: [],
+      customFields: {},
+      // Content Data用の追加フィールド
+      label: item.label,
+      data: item.data,
+      permalink: item.permalink,
+      basename: item.basename,
+      blog: item.blog,
+      date: item.date,
+      unpublishedDate: item.unpublishedDate,
+      updatable: item.updatable,
+    })) || [];
 
     // エンドポイント情報を追加
     const siteId = process.env.MOVABLETYPE_SITE_ID || '3';
-    const endpoint = `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`;
+    const endpoint = `/v6/sites/${siteId}/contentTypes/${contentTypeId}/data?limit=5`;
 
     return NextResponse.json({
-      ...result,
+      totalResults: directData.totalResults,
+      items: transformedItems,
       endpoint,
       status: 200,
     });
@@ -50,7 +81,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({
       error: errorMessage,
-      endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
+      endpoint: `/v6/sites/${siteId}/contentTypes/${contentTypeId.toString()}/data?limit=5`,
       status: 500,
     }, { status: 500 });
   }
