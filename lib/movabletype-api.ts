@@ -77,6 +77,7 @@ export class MovableTypeAPI {
       username: this.config.username,
       clientId: this.config.clientId,
       siteId: this.config.siteId,
+      passwordSet: !!this.config.password,
     });
 
     const formData = new URLSearchParams();
@@ -87,39 +88,58 @@ export class MovableTypeAPI {
 
     const authUrl = `${this.config.baseUrl}/v5/authentication`;
     console.log('Authentication URL:', authUrl);
+    console.log('Form data keys:', Array.from(formData.keys()));
 
-    const response = await fetch(authUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData,
-    });
-
-    console.log('Authentication response status:', response.status);
-    console.log('Authentication response headers:', Object.fromEntries(response.headers.entries()));
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Authentication failed:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorText,
+    try {
+      const response = await fetch(authUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData,
       });
-      throw new Error(`Authentication failed: ${response.status} ${response.statusText} - ${errorText}`);
+
+      console.log('Authentication response status:', response.status);
+      console.log('Authentication response status text:', response.statusText);
+      console.log('Authentication response headers:', Object.fromEntries(response.headers.entries()));
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Authentication failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+          url: authUrl,
+          formDataKeys: Array.from(formData.keys()),
+        });
+        throw new Error(`Authentication failed: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      const authData = await response.json();
+      console.log('Authentication successful:', {
+        sessionId: authData.sessionId ? '***' : 'NOT_SET',
+        accessToken: authData.accessToken ? '***' : 'NOT_SET',
+        expiresIn: authData.expiresIn,
+      });
+
+      this.sessionId = authData.sessionId;
+      this.accessToken = authData.accessToken;
+      
+      return authData;
+    } catch (error) {
+      console.error('Authentication error details:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        config: {
+          baseUrl: this.config.baseUrl,
+          username: this.config.username,
+          clientId: this.config.clientId,
+          siteId: this.config.siteId,
+          passwordSet: !!this.config.password,
+        }
+      });
+      throw error;
     }
-
-    const authData = await response.json();
-    console.log('Authentication successful:', {
-      sessionId: authData.sessionId ? '***' : 'NOT_SET',
-      accessToken: authData.accessToken ? '***' : 'NOT_SET',
-      expiresIn: authData.expiresIn,
-    });
-
-    this.sessionId = authData.sessionId;
-    this.accessToken = authData.accessToken;
-    
-    return authData;
   }
 
   // アクセストークンを取得

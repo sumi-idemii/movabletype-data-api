@@ -48,7 +48,17 @@ export async function GET(request: NextRequest) {
       { 
         error: 'Failed to fetch cases',
         details: errorMessage,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        debug: {
+          config: {
+            baseUrl: process.env.MOVABLETYPE_API_BASE_URL,
+            username: process.env.MOVABLETYPE_USERNAME ? '***' : 'NOT_SET',
+            password: process.env.MOVABLETYPE_PASSWORD ? '***' : 'NOT_SET',
+            clientId: process.env.MOVABLETYPE_CLIENT_ID,
+            siteId: process.env.MOVABLETYPE_SITE_ID,
+          },
+          stack: errorStack,
+        }
       },
       { status: 500 }
     );
