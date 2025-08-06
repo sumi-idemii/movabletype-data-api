@@ -35,16 +35,23 @@ export default function TestDataPage() {
         includeCustomFields: true,
       });
 
+      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      
       setProductsData({
         ...data,
-        endpoint: `MovableType Data API: content_types/${contentTypeId}/entries`,
+        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
         status: 200,
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Network error';
+      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      const contentTypeId = getContentTypeId('PRODUCTS');
+      
       setProductsData({
         error: errorMessage,
-        endpoint: `MovableType Data API: content_types/${getContentTypeId('PRODUCTS')}/entries`,
+        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
         status: 500,
       });
       setError(errorMessage);
@@ -72,16 +79,23 @@ export default function TestDataPage() {
         includeCustomFields: true,
       });
 
+      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      
       setCasesData({
         ...data,
-        endpoint: `MovableType Data API: content_types/${contentTypeId}/entries`,
+        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
         status: 200,
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Network error';
+      const baseUrl = process.env.NEXT_PUBLIC_MOVABLETYPE_API_BASE_URL || process.env.MOVABLETYPE_API_BASE_URL || '';
+      const siteId = process.env.NEXT_PUBLIC_MOVABLETYPE_SITE_ID || process.env.MOVABLETYPE_SITE_ID || '';
+      const contentTypeId = getContentTypeId('CASES');
+      
       setCasesData({
         error: errorMessage,
-        endpoint: `MovableType Data API: content_types/${getContentTypeId('CASES')}/entries`,
+        endpoint: `/v5/sites/${siteId}/content_types/${contentTypeId}/entries?limit=5`,
         status: 500,
       });
       setError(errorMessage);
